@@ -1,3 +1,7 @@
 [tools]
 python = "3.13"
 uv = "latest"
+kubeconform = "0.8.0"
+
+[tasks.test]
+run = "uv run pytest"
