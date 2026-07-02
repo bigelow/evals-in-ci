@@ -1,0 +1,30 @@
+{
+  "cli_version": "0.5.0",
+  "checkpoint_id": "f44352b25d37",
+  "session_id": "4dc52f3e-74a0-4df4-9b51-6700e3fa53bb",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-02T21:20:43.348801Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "fixtures/PROVENANCE.md"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "2c4736daafed",
+  "token_usage": {
+    "input_tokens": 3853,
+    "cache_creation_tokens": 23912,
+    "cache_read_tokens": 724198,
+    "output_tokens": 11901,
+    "api_call_count": 22
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-02T21:20:43.311599Z",
+    "agent_lines": 12,
+    "human_added": 229,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 241,
+    "agent_percentage": 4.979253112033195
+  }
+}

@@ -1,0 +1,1 @@
+Scaffold evals-in-ci: repo init, entire hooks, mise/uv/pytest, vendored k8s fixtures with provenance
