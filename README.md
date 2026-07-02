@@ -1,5 +1,7 @@
 # Evals in CI: a minimal working example
 
+[![ci](https://github.com/bigelow/evals-in-ci/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/bigelow/evals-in-ci/actions/workflows/ci.yml)
+
 This repo runs evals as ordinary CI checks: two verifiers over the same four
 vendored Kubernetes manifests, on every push. There is no framework and no
 harness — just pytest, a pinned validator, and a GitHub Actions job small
@@ -46,7 +48,7 @@ it, the same way the checks trace each fixture back to its source.
 ## Companion essay
 
 The essay this repo accompanies:
-[Evals as CI](https://bigelow.github.io/posts/evals-as-ci/).
+[Test the Agent Like You Test the Code](https://bigelow.github.io/posts/evals-as-ci/).
 
 ## License
 
