@@ -1,0 +1,51 @@
+<ide_opened_file>The user opened the file /Users/sbigelow/Workspace/evals-in-ci/pyproject.toml in the IDE. This may or may not be related to the current task.</ide_opened_file>
+Never add co-authored to any files or tasks.
+
+Always cleanup after tests are run.
+
+---
+
+Please create a Overview again of what was accomplished
+
+---
+
+# Prompt 3: CI + README
+
+Finish /Users/sbigelow/Workspace/evals-in-ci. Two pieces: the CI job
+(the repo's namesake) and the README that explains it.
+
+## .github/workflows/ci.yml
+One workflow, one job. Trigger on push and pull_request to main.
+Steps: checkout, install mise (jdx/mise-action pinned to a full commit
+SHA), mise install, mise run test. Nothing else — no caching cleverness,
+no matrix. The job IS the demo, so it must be readable in one screen.
+
+## README.md
+Replace the stub. Structure, all prose (no bullet walls):
+
+1. What this is — a minimal working example of evals as CI checks:
+   two verifiers over the same vendored manifests. Two or three
+   sentences.
+2. The two tiers — schema (kubeconform, what a schema can express)
+   and properties (what it can't). One short paragraph each, naming
+   the actual files.
+3. Provenance — fixtures vendored from bigelow/kubernetes-2026 at a
+   pinned SHA; point to fixtures/PROVENANCE.md. Note that pinning is
+   the point: evidence tied to an inspectable state.
+4. Run it — mise install, mise run test. Two lines.
+5. Evidence trail — one paragraph noting every commit in this repo has
+   an Entire.io session checkpoint alongside it: the work that built
+   the verifier is itself inspectable.
+6. Companion essay — link to
+   https://bigelow.github.io/posts/evals-as-ci/
+7. License — Apache 2.0. Add the LICENSE file.
+
+Voice: first person, claims sized to evidence, no verdict theater.
+Under 60 lines total.
+
+## Wrap up
+- Commit ci.yml and README separately, plain messages.
+- Create the public GitHub repo (bigelow/evals-in-ci), add a repo
+  description ("Evals as CI checks — a minimal working example"),
+  push, and confirm the Actions run is green on GitHub.
+- Report the repo URL and the Actions run URL.
