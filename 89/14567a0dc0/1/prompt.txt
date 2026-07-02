@@ -1,0 +1,31 @@
+# Prompt 4: Finish evals-in-ci — close the loop
+
+Two small tasks: one in the blog repo, one in the eval repo. This
+completes the evals-in-ci work.
+
+## Task 1 — blog repo (bigelow.github.io)
+In the published post "Test the Agent Like You Test the Code"
+(content path for /posts/evals-as-ci/), in the "Start smaller than
+feels serious" section, after the sentence about the JSON manifest
+and comparison script, add:
+
+> If you want the runnable version, it lives at
+> [bigelow/evals-in-ci](https://github.com/bigelow/evals-in-ci) — one
+> fixture directory, two check files, one CI job, sixteen green checks.
+
+Change nothing else in the post. Update lastmod if the theme supports
+it. Build with hugo, confirm the post renders and the link resolves,
+commit with a plain one-line message, push.
+
+## Task 2 — eval repo (/Users/sbigelow/Workspace/evals-in-ci)
+Add the CI status badge to the top of README.md, directly under the
+title — the standard GitHub Actions badge for the ci.yml workflow on
+main, linked to the Actions page. A green badge on this repo is
+evidence, not decoration. Commit, push, confirm the badge renders
+green on GitHub.
+
+## Done report
+- Live essay URL with the new link visible
+- Repo README showing the green badge
+- Confirm the loop: essay → repo → checkpoints, each layer linking
+  to its evidence
