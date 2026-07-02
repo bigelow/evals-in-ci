@@ -1,0 +1,32 @@
+# Prompt 2: The check runner
+
+Add the eval checks to /Users/sbigelow/Workspace/evals-in-ci. Two verifiers, mirroring the
+essay's "two different verifiers, same lesson" — one schema check, one
+property check. Keep it to two small files.
+
+## checks/test_schema.py
+Runs kubeconform against every YAML in fixtures/ with strict mode and
+the resource.k8s.io/v1 schemas enabled. One pytest test, parametrized
+per file. Add kubeconform to mise.toml as a tool; do not shell out to
+an unpinned binary.
+
+## checks/test_properties.py
+Property checks kubeconform can't express — the "claims traceable to
+source" tier. Parse fixtures with PyYAML and assert 3 properties, e.g.:
+- every container sets resource requests and limits
+- no image uses the :latest tag
+- DRA ResourceClaimTemplate uses the GA resource.k8s.io/v1 request shape
+Pick properties the vendored fixtures actually satisfy; the suite must
+pass green. Add pyyaml to pyproject.
+
+## Constraints
+- pytest is the only runner. `mise run test` (or `uv run pytest`) is the
+  whole interface — no wrapper scripts, no config beyond pyproject.
+- Every assertion failure message must name the file and the violated
+  property. A red check that doesn't say why is off-thesis.
+- No helper modules, no abstractions. If a check needs a function, it
+  lives in the same file.
+
+## Commits
+One commit per check file, plain messages. Confirm Entire.io captured
+both sessions. Show me the passing pytest output.
