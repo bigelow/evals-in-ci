@@ -1,0 +1,50 @@
+# ADR-0003: Gateway API for traffic routing (replaces legacy Ingress for new work)
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: primary-gateway
+  namespace: platform-ingress
+spec:
+  gatewayClassName: envoy-gateway   # any maintained Gateway API controller
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: primary-gateway-tls
+      # Default is `Same`, which would reject the tenant HTTPRoutes below (they
+      # live in team-* namespaces, not platform-ingress). Allow routes from any
+      # namespace carrying a `tenant` label so cross-namespace routes attach.
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchExpressions:
+              - key: tenant
+                operator: Exists
+---
+# Basic single-backend route: the default path for the host. The /payments
+# path is owned by the weighted canary route in httproute-traffic-split.yaml —
+# keep exactly one route per (hostname, path prefix) so Gateway API conflict
+# resolution never has to pick a winner between them.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: example-api-route
+  namespace: team-payments
+spec:
+  parentRefs:
+    - name: primary-gateway
+      namespace: platform-ingress
+  hostnames:
+    - "api.example.internal"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: storefront-svc
+          port: 8080

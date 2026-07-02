@@ -1,0 +1,60 @@
+# ADR-0008: DRA — declarative accelerator requests instead of Device Plugin
+# extended-resource counting. GA since v1.34.
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: nvidia-gpu
+spec:
+  selectors:
+    - cel:
+        expression: 'device.driver == "gpu.nvidia.com"'
+---
+apiVersion: resource.k8s.io/v1
+kind: ResourceClaimTemplate
+metadata:
+  name: gpu-slice-claim
+  namespace: team-ml
+spec:
+  spec:
+    devices:
+      requests:
+        # GA resource.k8s.io/v1: a request names a class via `exactly`
+        # (vs `firstAvailable` for prioritized alternatives). deviceClassName
+        # and count live under `exactly`, not directly on the request.
+        - name: gpu
+          exactly:
+            deviceClassName: nvidia-gpu
+            count: 1
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: inference-worker
+  namespace: team-ml
+spec:
+  # Non-root, no privilege escalation, all capabilities dropped, seccomp on.
+  # DRA injects the GPU device without needing extra pod privileges.
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: worker
+      image: inference-worker:1.0
+      resources:
+        requests:
+          cpu: "2"
+          memory: "8Gi"
+        limits:
+          cpu: "4"
+          memory: "16Gi"
+        claims:
+          - name: gpu
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
+  resourceClaims:
+    - name: gpu
+      resourceClaimTemplateName: gpu-slice-claim

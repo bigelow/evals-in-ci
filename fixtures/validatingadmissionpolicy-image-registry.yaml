@@ -1,0 +1,53 @@
+# ADR-0007: reject Pods pulling from unapproved registries. GA since v1.30.
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: restrict-image-registries
+spec:
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  validations:
+    # This policy matches resources: ["pods"] — i.e. CREATE/UPDATE of the Pod
+    # object. It checks images on containers, initContainers, and any
+    # ephemeralContainers already present on that object. Note: ephemeral
+    # containers are normally injected AFTER creation via the
+    # pods/ephemeralcontainers subresource, which this policy does NOT match,
+    # so `kubectl debug`-style ephemeral containers are NOT gated at admission
+    # here. scripts/validate.py flags ephemeralContainers at CI time.
+    # The init/ephemeral lists are optional on the spec, hence the has() guards.
+    - expression: >
+        object.spec.containers.all(c,
+          c.image.startsWith("registry.internal.example.com/") ||
+          c.image.startsWith("gcr.io/distroless/")
+        ) &&
+        (!has(object.spec.initContainers) ||
+          object.spec.initContainers.all(c,
+            c.image.startsWith("registry.internal.example.com/") ||
+            c.image.startsWith("gcr.io/distroless/")
+          )
+        ) &&
+        (!has(object.spec.ephemeralContainers) ||
+          object.spec.ephemeralContainers.all(c,
+            c.image.startsWith("registry.internal.example.com/") ||
+            c.image.startsWith("gcr.io/distroless/")
+          )
+        )
+      message: "All container images (containers, initContainers, ephemeralContainers) must come from an approved registry."
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: restrict-image-registries-binding
+spec:
+  policyName: restrict-image-registries
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchExpressions:
+        - key: tier
+          operator: NotIn
+          values: ["platform-system"]   # platform namespaces exempted
