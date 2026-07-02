@@ -1,0 +1,9 @@
+[project]
+name = "evals-in-ci"
+version = "0.1.0"
+description = "Evals in CI: a minimal working example"
+requires-python = ">=3.13"
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest"]
